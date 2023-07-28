@@ -1,6 +1,10 @@
+# ----------in terminal-------------------
+# python setup.py py2app (product)
+# python setup.py py2app -A (for testing)
+# ----------------------------------------
 from setuptools import setup
 
-APP = ['main.py']
+APP = ['detect-general.py']
 DATA_FILES = []
 OPTIONS = {
     'argv_emulation': True,

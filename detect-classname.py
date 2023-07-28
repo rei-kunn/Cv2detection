@@ -1,21 +1,21 @@
 import cv2
-from button_gui import Buttons
+from gui_buttons import Buttons
 
 #OpenCV DNN
-net = cv2.dnn.readNet("deepFaceDetection/openCV_detection/dnn_model/yolov4-tiny.cfg", "deepFaceDetection/openCV_detection/dnn_model/yolov4-tiny.weights")
+net = cv2.dnn.readNet("dnn_model/yolov4-tiny.cfg", "dnn_model/yolov4-tiny.weights")
 model = cv2.dnn_DetectionModel(net)
 model.setInputParams(size=(412,412), scale=1/255)
 
 #load class list
 classes = []
-with open("deepFaceDetection/openCV_detection/dnn_model/classes.txt","r") as file_object:
+with open("dnn_model/classes.txt","r") as file_object:
     for class_name in file_object.readlines():
         class_name = class_name.strip()
         classes.append(class_name)
 
 #initialize buttons
 button = Buttons()
-button.add_button(20,20)
+button.add_button("person",20,20)
 colors = button.colors
 
 #initialize camera
@@ -43,15 +43,16 @@ while True:
         break
 
     #get active button
-    # active_buttons = button.active_buttons_list()
+    active_buttons = button.active_buttons_list()
 
     #object detection
-    if button.get_detection_status():
-        (class_id, scores, bboxes) = model.detect(frame)
-        for class_id,scores, bboxes in zip(class_id, scores, bboxes):
-            (x,y,w,h) = bboxes
-            class_name = classes[class_id]
-            # print(x,y,w,h)
+    (class_id, scores, bboxes) = model.detect(frame)
+    for class_id,scores, bboxes in zip(class_id, scores, bboxes):
+        (x,y,w,h) = bboxes
+        class_name = classes[class_id]
+        # print(x,y,w,h)
+        
+        if class_name in active_buttons:
             cv2.putText(frame, class_name, (x,y -10), cv2.FONT_HERSHEY_PLAIN, 2,(0,150,200),3)
             cv2.rectangle(frame,(x,y),(x+w,y+h),(0,150,200),2)
 
